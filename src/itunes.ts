@@ -3,7 +3,8 @@ export const ITUNES_LINK_BASE =
   "https://itunes.apple.com/search?media=podcast&entity=podcast&attribute=titleTerm";
 
 export const getLink = (terms: string, limit = ITUNES_SEARCH_MAX) => {
-  return `${ITUNES_LINK_BASE}&limit=${limit}&term=${terms}`;
+  const linkStr = `${ITUNES_LINK_BASE}&limit=${limit}&term=${terms}`;
+  return new URL(linkStr);
 };
 
 // Rate limit values (20 calls per minute)
