@@ -23,6 +23,12 @@ const podcastsStream = fs.createWriteStream(
     flags: "w",
   }
 );
+const noFeedStream = fs.createWriteStream(
+  `${outputDir}/${datePrefix}-nofeed.json`,
+  {
+    flags: "w",
+  }
+);
 
 // Queue fetch and perform callback when done
 // Fetch podcast data
@@ -47,11 +53,17 @@ const defaultCallback = async (
   for (const result of data.results) {
     console.log(`Saving data for feed: ${result.feedUrl}`);
     // Dedupe and save feeds and objects
-    const prevLength = scrapedData.size;
-    scrapedData.set(result.feedUrl, result);
-    if (scrapedData.size > prevLength) {
-      feedsStream.write(`${result.feedUrl}\n`);
-      podcastsStream.write(`${JSON.stringify(result)},\n`);
+    if (result.feedUrl) {
+      const prevLength = scrapedData.size;
+      scrapedData.set(result.feedUrl, result);
+      if (scrapedData.size > prevLength) {
+        feedsStream.write(`${result.feedUrl}\n`);
+        podcastsStream.write(`${JSON.stringify(result)},\n`);
+      }
+    }
+    // Track podcasts without feeds
+    else {
+      noFeedStream.write(`${JSON.stringify(result)},\n`);
     }
   }
 

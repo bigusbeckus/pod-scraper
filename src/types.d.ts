@@ -11,7 +11,7 @@ export type PodcastSearchResult = {
   trackCensoredName: string;
   artistViewUrl: string;
   collectionViewUrl: string;
-  feedUrl: string;
+  feedUrl?: string;
   trackViewUrl: string;
   artworkUrl30: string;
   artworkUrl60: string;
