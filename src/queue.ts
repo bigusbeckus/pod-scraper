@@ -10,7 +10,7 @@ export class Queue<T> {
   }
 
   enqueueBulk(elements: T[]) {
-    this.elements.unshift(...elements);
+    this.elements.unshift(...elements.reverse());
   }
 
   dequeue() {
