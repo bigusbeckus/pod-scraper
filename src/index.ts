@@ -1,7 +1,28 @@
-import { alphabet } from "./constants";
+import { alphabet, outputDir } from "./constants";
 import { getLink, INTERVAL, ITUNES_SEARCH_MAX } from "./itunes";
 import { PodcastSearchResult, SearchReturn } from "./types";
 import { Queue } from "./queue";
+import fs from "fs";
+
+// Ensure output directory exists
+if (!(fs.existsSync(outputDir) && fs.lstatSync(outputDir).isDirectory)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+// Create write streams
+const datePrefix = Date.now().toString();
+const feedsStream = fs.createWriteStream(
+  `${outputDir}/${datePrefix}-feeds.txt`,
+  {
+    flags: "w",
+  }
+);
+const podcastsStream = fs.createWriteStream(
+  `${outputDir}/${datePrefix}-podcasts.json`,
+  {
+    flags: "w",
+  }
+);
 
 // Queue fetch and perform callback when done
 // Fetch podcast data
@@ -25,7 +46,13 @@ const defaultCallback = async (
   console.log(`${data.resultCount} result(s) found`);
   for (const result of data.results) {
     console.log(`Saving data for feed: ${result.feedUrl}`);
+    // Dedupe and save feeds and objects
+    const prevLength = scrapedData.size;
     scrapedData.set(result.feedUrl, result);
+    if (scrapedData.size > prevLength) {
+      feedsStream.write(`${result.feedUrl}\n`);
+      podcastsStream.write(`${JSON.stringify(result)},\n`);
+    }
   }
 
   if (data.resultCount >= ITUNES_SEARCH_MAX) {

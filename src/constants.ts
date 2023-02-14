@@ -26,3 +26,5 @@ export const alphabet = [
   "y",
   "z",
 ];
+
+export const outputDir = "output";
