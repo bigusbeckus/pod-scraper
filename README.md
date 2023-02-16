@@ -2,6 +2,8 @@
 
 Scrapes the iTunes search API for podcast feeds without hitting the rate limits
 
-## Upcoming features
+## TODO
 
-- Save the feed urls and podcast data to a file (most likely) or db or something
+- ~~Save the feed urls and podcast data to a file (most likely) or db or something~~
+
+- Properly handle connection losses (this thing slow)
