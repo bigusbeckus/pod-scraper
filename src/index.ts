@@ -32,8 +32,19 @@ const noFeedStream = fs.createWriteStream(
 
 // Queue fetch and perform callback when done
 // Fetch podcast data
-const fetchPodcastData = async (link: URL) => {
-  return (await (await fetch(link)).json()) as SearchReturn;
+const fetchPodcastData = async (link: URL): Promise<SearchReturn> => {
+  try {
+    return (await (await fetch(link)).json()) as SearchReturn;
+  } catch (error) {
+    console.error(error);
+    console.log(
+      "Rate limit possibly reached. Waiting for 1 minute before retrying"
+    );
+    await new Promise(() =>
+      setTimeout(() => console.log("Attempting to continue....", 60000))
+    );
+    return fetchPodcastData(link);
+  }
 };
 
 const q = new Queue<{
